@@ -8,7 +8,7 @@ export const fetchUnreadEmails = async (auth: OAuth2Client): Promise<gmail_v1.Sc
     const gmailClient = google.gmail({ version: 'v1', auth });
     const res = await gmailClient.users.messages.list({
         userId: 'me',
-        q: 'is:unread',
+        q: 'is:unread category:primary', // Updated query
     });
 
     const messages = res.data.messages || [];
@@ -26,7 +26,11 @@ export const fetchUnreadEmails = async (auth: OAuth2Client): Promise<gmail_v1.Sc
     return emails;
 };
 
-export const sendEmailResponse = async (auth: OAuth2Client, messageId: string, responseText: string) => {
+export const sendEmailResponse = async (
+    auth: OAuth2Client,
+    messageId: string,
+    responseText: string
+) => {
     const gmailClient = google.gmail({ version: 'v1', auth });
 
     // Get the original email to find the sender
@@ -42,6 +46,9 @@ export const sendEmailResponse = async (auth: OAuth2Client, messageId: string, r
     if (!to) {
         throw new Error('Unable to find the sender\'s email address');
     }
+
+    const senderNameMatch = fromHeader?.value?.match(/"?(.*?)"?\s*</);
+    const senderName = senderNameMatch ? senderNameMatch[1] : 'there';
 
     const raw = Buffer.from(
         `From: me

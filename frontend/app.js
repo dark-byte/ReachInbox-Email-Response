@@ -23,6 +23,7 @@ document.getElementById('classify-btn').addEventListener('click', async () => {
         });
         const data = await response.json();
         alert(data.message);
+        fetchLogs(); // Refresh logs after enqueuing job
     } catch (error) {
         console.error('Error:', error);
         alert('You need to log in to classify emails.');
@@ -38,8 +39,17 @@ const fetchLogs = async () => {
         });
         const data = await response.json();
 
-        document.getElementById('results').innerHTML = data.map(log => `
-            <div class="log-entry">
+        if (data.length === 0) {
+            document.getElementById('results').innerHTML = '<p>No processed emails yet.</p>';
+            return;
+        }
+
+        document.getElementById('results').innerHTML = '';
+        const emailView = document.getElementById('email-view');
+        const emailList = document.getElementById('email-list');
+
+        emailList.innerHTML = data.map(log => `
+            <div class="email-item">
                 <h3>Email ID: ${log.emailId}</h3>
                 <p><strong>Classification:</strong> ${log.classification}</p>
                 <p><strong>Snippet:</strong> ${log.snippet}</p>
@@ -47,6 +57,8 @@ const fetchLogs = async () => {
                 <p><em>Processed at: ${new Date(log.timestamp).toLocaleString()}</em></p>
             </div>
         `).join('');
+        
+        emailView.style.display = 'block';
     } catch (error) {
         console.error('Error fetching logs:', error);
     }

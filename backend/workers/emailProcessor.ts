@@ -40,7 +40,7 @@ export const processEmail = async (job: Job) => {
         throw new Error('Failed to refresh access token');
     }
 
-    // Fetch unread emails using the authenticated client
+    // Fetch unread emails in the Primary category
     const emails = await fetchUnreadEmails(oauth2Client);
 
     for (const email of emails) {
@@ -66,11 +66,17 @@ export const processEmail = async (job: Job) => {
             emailText = 'No content available.';
         }
 
+        // Extract sender's name
+        const headers = email.payload?.headers;
+        const fromHeader = headers?.find(header => header.name === 'From');
+        const senderNameMatch = fromHeader?.value?.match(/"?(.*?)"?\s*</);
+        const senderName = senderNameMatch ? senderNameMatch[1] : 'there';
+
         // Classify the email
         const classification = await classifyEmail(emailText);
 
         // Generate response based on classification
-        const responseEmail = await generateResponse(classification, emailText);
+        const responseEmail = await generateResponse(classification, emailText, senderName);
 
         // Send the response email
         await sendEmailResponse(oauth2Client, emailId, responseEmail);
