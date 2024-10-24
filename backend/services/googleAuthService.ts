@@ -2,7 +2,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { redisConnection } from '../redis/connection'; // Import Redis connection
-import { enableAutoReply } from '../controllers/emailController'; // Import enableAutoReply
+import { enableAutoReplyService } from './autoReplyService'; // Import enableAutoReplyService
 
 dotenv.config();
 
@@ -58,11 +58,13 @@ export const googleCallback = async (req: Request, res: Response) => {
         }));
 
         // Automatically enable auto-reply after login
-        await enableAutoReply(req, res, () => {});
+        await enableAutoReplyService(sessionId);
 
         res.redirect('/'); // Redirect to frontend
     } catch (error) {
         console.error('Error retrieving tokens:', error);
-        res.status(500).send('Authentication failed');
+        if (!res.headersSent) {
+            res.status(500).send('Authentication failed');
+        }
     }
 };
