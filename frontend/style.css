@@ -23,3 +23,12 @@ button {
     font-size: 14px;
     color: #333;
 }
+
+.log-entry {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}

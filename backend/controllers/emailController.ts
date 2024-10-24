@@ -1,32 +1,50 @@
+import { Queue } from 'bullmq';
+import dotenv from 'dotenv';
+import IORedis from 'ioredis';
 import { Request, Response } from 'express';
-import { fetchUnreadEmails } from '../services/emailService';
-import { classifyEmail, generateResponse } from '../services/openAiService';
 
-export const classifyEmails = async (req: Request, res: Response) => {
-    const token = req.session.token;
-    if (!token) {
-        return res.status(401).json({ error: 'Unauthorized: No access token' });
+// Load environment variables
+dotenv.config();
+
+// Initialize BullMQ Queue
+const connection = new IORedis({
+    host: process.env.REDIS_HOST,
+    port: parseInt(process.env.REDIS_PORT || '6379'),
+});
+const emailQueue = new Queue('emailQueue', { connection });
+
+// In-memory log storage (for demonstration purposes)
+let emailLogs: Array<{
+    emailId: string;
+    classification: string;
+    snippet: string;
+    responseEmail: string;
+    timestamp: string;
+}> = [];
+
+// Enqueue email processing job
+export const enqueueEmailJob = async ({ token, refreshToken }: { token?: string; refreshToken?: string }) => {
+    if (!token || !refreshToken) {
+        throw new Error('No access token or refresh token provided');
     }
 
-    console.log('Session Token:', token); // Debugging line
-    const emails = await fetchUnreadEmails(token);
-    console.log('Fetched Emails:', emails); // Debugging line
-    const classifiedEmails = await Promise.all(
-        emails.map(async (email) => {
-            const snippet = email.snippet || '';
-            const classification = await classifyEmail(snippet);
-            const responseEmail = await generateResponse(classification, snippet);
+    await emailQueue.add('processEmails', { token, refreshToken }); // Include both tokens
+};
 
-            return {
-                id: email.id,
-                classification,
-                snippet,
-                responseEmail,
-            };
-        })
-    );
+// Function to add logs
+export const addLog = (log: {
+    emailId: string;
+    classification: string;
+    snippet: string;
+    responseEmail: string;
+}) => {
+    emailLogs.push({
+        ...log,
+        timestamp: new Date().toISOString(),
+    });
+};
 
-    // Here you can also send the email response via Gmail API (not included for brevity)
-
-    res.json(classifiedEmails);
+// Fetch logs
+export const getLogs = async () => {
+    return emailLogs;
 };
