@@ -9,9 +9,20 @@
 <body>
     <div class="container">
         <h1>Email Classifier</h1>
+        
+        <!-- Login Button -->
         <button id="login-btn">Login with Google</button>
-        <button id="classify-btn" style="display: none;">Classify Unread Emails</button>
+        
+        <!-- Auto-Reply Control Buttons (Initially Hidden) -->
+        <div id="auto-reply-controls" style="display: none; margin-top: 20px;">
+            <button id="enable-auto-reply-btn" class="control-btn">Enable Auto-Reply</button>
+            <button id="disable-auto-reply-btn" class="control-btn" style="display: none;">Disable Auto-Reply</button>
+        </div>
+        
+        <!-- Results Section -->
         <div id="results"></div>
+        
+        <!-- Email View Section (Initially Hidden) -->
         <div id="email-view" style="display: none;">
             <h2>Emails and Responses</h2>
             <div id="email-list"></div>

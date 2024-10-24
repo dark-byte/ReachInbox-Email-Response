@@ -7,11 +7,12 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// Modify to accept tokens from job data
 export const processEmail = async (job: Job) => {
-    const { token, refreshToken } = job.data;
-    console.log('Processing Job:', job.id, { token, refreshToken }); // Debug log
+    const { access_token, refresh_token } = job.data;
+    console.log('Processing Job:', job.id); // Debug log
 
-    if (!token || !refreshToken) {
+    if (!access_token || !refresh_token) {
         throw new Error('No access token or refresh token provided');
     }
 
@@ -24,17 +25,18 @@ export const processEmail = async (job: Job) => {
 
     // Set credentials including refresh token
     oauth2Client.setCredentials({
-        access_token: token,
-        refresh_token: refreshToken,
+        access_token,
+        refresh_token,
     });
 
     try {
         // Automatically refresh the access token if needed
         const { token: refreshedToken } = await oauth2Client.getAccessToken();
         if (refreshedToken) {
-            // Optionally, update the session with the new access token
-            // This requires additional implementation if you wish to persist it
             console.log('Access token refreshed');
+            // Update tokens in Redis if necessary
+            // This implementation uses session-based tokens stored in Redis
+            // Additional logic can be added here to update the tokens in Redis
         }
     } catch (error) {
         throw new Error('Failed to refresh access token');

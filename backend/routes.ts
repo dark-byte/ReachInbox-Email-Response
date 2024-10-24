@@ -1,5 +1,11 @@
 import { Router } from 'express';
-import { enqueueEmailJob, getLogs } from './controllers/emailController';
+import { 
+    enqueueEmailJob, 
+    getLogs, 
+    enableAutoReply, 
+    disableAutoReply, 
+    getAutoReplyStatus 
+} from './controllers/emailController';
 
 // Extend the SessionData interface
 declare module 'express-session' {
@@ -16,7 +22,7 @@ router.get('/check-auth', (req, res) => {
     res.json({ isAuthenticated: !!req.session.token });
 });
 
-// Enqueue email classification job
+// Enqueue email processing job (Deprecated since auto-reply is enabled automatically)
 router.get('/classify-emails', async (req, res, next) => {
     try {
         await enqueueEmailJob({
@@ -29,6 +35,12 @@ router.get('/classify-emails', async (req, res, next) => {
     }
 });
 
+// Enable auto-reply
+router.post('/enable-auto-reply', enableAutoReply);
+
+// Disable auto-reply
+router.post('/disable-auto-reply', disableAutoReply);
+
 // Fetch logs
 router.get('/logs', async (req, res, next) => {
     try {
@@ -38,5 +50,8 @@ router.get('/logs', async (req, res, next) => {
         next(error);
     }
 });
+
+// Fetch auto-reply status
+router.get('/get-auto-reply-status', getAutoReplyStatus);
 
 export const emailRoutes = router;

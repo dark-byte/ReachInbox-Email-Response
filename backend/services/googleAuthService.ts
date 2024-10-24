@@ -1,6 +1,8 @@
 import { OAuth2Client } from 'google-auth-library';
 import { Request, Response } from 'express';
 import dotenv from 'dotenv';
+import { redisConnection } from '../redis/connection'; // Import Redis connection
+import { enableAutoReply } from '../controllers/emailController'; // Import enableAutoReply
 
 dotenv.config();
 
@@ -47,6 +49,16 @@ export const googleCallback = async (req: Request, res: Response) => {
             }
             console.log('Session saved:', req.session);
         }
+
+        // Store tokens in Redis with a unique key (e.g., session ID)
+        const sessionId = req.sessionID;
+        await redisConnection.set(`tokens:${sessionId}`, JSON.stringify({
+            access_token: tokens.access_token,
+            refresh_token: tokens.refresh_token,
+        }));
+
+        // Automatically enable auto-reply after login
+        await enableAutoReply(req, res, () => {});
 
         res.redirect('/'); // Redirect to frontend
     } catch (error) {
