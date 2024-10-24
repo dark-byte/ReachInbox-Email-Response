@@ -2,7 +2,7 @@
 
 ![ReachInbox Email Response](https://socialify.git.ci/dark-byte/ReachInbox-Email-Response/image?language=1&owner=1&name=1&stargazers=1&theme=Light)
 
-**ReachInbox Email Response** is an intelligent email management tool designed to automate the process of classifying and responding to incoming emails. Leveraging the power of OpenAI's language models and BullMQ for task scheduling, ReachInbox Email Response seamlessly integrates with Gmail and Outlook accounts via OAuth, categorizes emails based on their content, assigns appropriate labels, and sends automated, context-aware responses. Built with TypeScript for enhanced type safety and maintainability, ReachInbox Email Response offers a streamlined solution for efficient inbox management.
+**ReachInbox Email Response** is an intelligent email management tool designed to automate the process of classifying and responding to incoming emails. Leveraging the power of OpenAI's language models and BullMQ for task scheduling, ReachInbox Email Response seamlessly integrates with Gmail accounts via OAuth, categorizes emails based on their content, assigns appropriate labels, and sends automated, context-aware responses. Built with TypeScript for enhanced type safety and maintainability, ReachInbox Email Response offers a streamlined solution for efficient inbox management.
 
 ## Table of Contents
 
@@ -21,7 +21,7 @@
 
 ## Features
 
-- **OAuth Integration**: Securely connect and manage Gmail and Outlook accounts using OAuth 2.0.
+- **OAuth Integration**: Securely connect and manage Gmail accounts using OAuth 2.0.
 - **Automated Email Classification**: Utilize OpenAI's language models to analyze and categorize incoming emails into predefined labels:
   - **Interested**
   - **Not Interested**
@@ -39,7 +39,7 @@ Before setting up the project, ensure you have the following installed on your m
 - [Node.js](https://nodejs.org/en/) (v14 or higher)
 - [npm](https://www.npmjs.com/) (comes with Node.js)
 - [Redis](https://redis.io/) (for BullMQ task management)
-- Google and Outlook developer accounts for OAuth setup
+- Google Console accounts for OAuth setup
 
 ## Technologies Used
 
@@ -108,11 +108,6 @@ Before setting up the project, ensure you have the following installed on your m
    GOOGLE_CLIENT_SECRET=your_google_client_secret
    GOOGLE_REDIRECT_URI=http://localhost:3000/auth/google/callback
 
-   # Outlook OAuth Configuration
-   OUTLOOK_CLIENT_ID=your_outlook_client_id
-   OUTLOOK_CLIENT_SECRET=your_outlook_client_secret
-   OUTLOOK_REDIRECT_URI=http://localhost:3000/auth/outlook/callback
-
    # OpenAI Configuration
    OPENAI_API_KEY=your_openai_api_key
    ```
@@ -120,10 +115,6 @@ Before setting up the project, ensure you have the following installed on your m
    - **Google OAuth**:
      - Obtain `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` from the [Google Cloud Console](https://console.cloud.google.com/).
      - Set the `GOOGLE_REDIRECT_URI` to `http://localhost:3000/auth/google/callback`.
-
-   - **Outlook OAuth**:
-     - Obtain `OUTLOOK_CLIENT_ID` and `OUTLOOK_CLIENT_SECRET` from the [Microsoft Azure Portal](https://portal.azure.com/).
-     - Set the `OUTLOOK_REDIRECT_URI` to `http://localhost:3000/auth/outlook/callback`.
 
    - **OpenAI**:
      - Obtain your `OPENAI_API_KEY` from your [OpenAI account](https://platform.openai.com/account/api-keys).
@@ -178,23 +169,6 @@ The application exposes several API endpoints for managing email processing and 
 
     Handles the OAuth 2.0 callback from Google and initializes user sessions.
 
-- **Outlook OAuth**
-
-  - **Login**
-
-    ```
-    GET /auth/outlook
-    ```
-
-    Redirects the user to Outlook's OAuth 2.0 consent screen.
-
-  - **Callback**
-
-    ```
-    GET /auth/outlook/callback
-    ```
-
-    Handles the OAuth 2.0 callback from Outlook and initializes user sessions.
 
 ### Protected API Routes (`/api`)
 
@@ -273,10 +247,6 @@ The application exposes several API endpoints for managing email processing and 
      - Authenticate your Google account via the OAuth consent screen.
      - Grant the necessary permissions for email access.
 
-   - **Login with Outlook**:
-     - Click the "Login with Outlook" button (if implemented).
-     - Authenticate your Outlook account via the OAuth consent screen.
-     - Grant the necessary permissions for email access.
 
 2. **Enable Auto-Reply**
 
@@ -285,7 +255,7 @@ The application exposes several API endpoints for managing email processing and 
 
 3. **Sending Emails**
 
-   - Send emails to your connected Gmail or Outlook accounts from another account to test the auto-reply functionality.
+   - Send emails to your connected Gmail accounts from another account to test the auto-reply functionality.
 
 4. **Monitoring Logs**
 
@@ -298,11 +268,11 @@ To showcase the working of ReachInbox Email Response:
 
 1. **Connecting Email Accounts**
 
-   - Authenticate both Gmail and Outlook accounts using OAuth.
+   - Authenticate both Gmail accounts using OAuth.
 
 2. **Sending Test Emails**
 
-   - From another email account, send emails to the connected Gmail and Outlook accounts.
+   - From another email account, send emails to the connected Gmail accounts.
 
 3. **Automatic Processing and Responding**
 
@@ -348,4 +318,4 @@ This project is licensed under the [MIT License](LICENSE).
 - [OpenAI](https://openai.com/) for providing powerful language models.
 - [BullMQ](https://docs.bullmq.io/) for robust task scheduling.
 - [Google APIs](https://developers.google.com/apis-explorer) for seamless email integrations.
-- [Microsoft Graph](https://docs.microsoft.com/en-us/graph/overview) for Outlook email integrations.
+
